@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Management System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e72121;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: auto;
+      background: #cdec1f;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-container input[type="submit"],
+    .update-button,
+    .delete-button {
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px 0;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .form-container input[type="submit"]:hover,
+    .update-button:hover,
+    .delete-button:hover {
+      background: #0056b3;
+    }
+
+    .update-button,
+    .delete-button {
+      width: 48%;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #007BFF;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Player Management System</h2>
+    <div class="form-container">
+      <input type="text" id="playerName" placeholder="Enter Player Name">
+      <div class="button-container">
+        <input type="submit" value="Add Player">
+        <button class="update-button">Modify Player Name</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Player Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+    <button class="delete-button">Delete Player Details</button>
+  </div>
+</body>
+<script>
+  let players = [];
+  let nextPlayerId = 1;
+
+
+  function addPlayer(playerName) {
+    players.push({ id: nextPlayerId, name: playerName });
+    nextPlayerId++;
+  }
+
+
+  function updatePlayer(playerId, playerName) {
+    const player = players.find(p => p.id === playerId);
+    if (player) {
+      player.name = playerName;
+    }
+  }
+
+
+  function deletePlayer(playerId) {
+    players = players.filter(player => player.id !== playerId);
+  }
+
+
+  function populatePlayerList() {
+    const tableBody = document.querySelector('table tbody');
+    tableBody.innerHTML = '';
+    players.forEach(player => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+                    <td>${player.id}</td>
+                    <td>${player.name}</td>
+                    <td><input type="radio" name="selectedPlayer" value="${player.id}"></td>
+                `;
+      tableBody.appendChild(row);
+    });
+  }
+
+
+  document.querySelector('input[type="submit"]').addEventListener('click', (event) => {
+    event.preventDefault();
+    const playerName = document.getElementById('playerName').value;
+    if (playerName.trim() !== '') {
+      addPlayer(playerName);
+      document.getElementById('playerName').value = '';
+      populatePlayerList();
+    }
+  });
+
+
+  document.querySelector('.update-button').addEventListener('click', () => {
+    const playerId = document.querySelector('input[name="selectedPlayer"]:checked');
+    if (playerId) {
+      const playerName = document.getElementById('playerName').value;
+      if (playerName.trim() !== '') {
+        updatePlayer(parseInt(playerId.value), playerName);
+        document.getElementById('playerName').value = '';
+        populatePlayerList();
+      }
+    }
+  });
+
+
+  document.querySelector('.delete-button').addEventListener('click', () => {
+    const playerId = document.querySelector('input[name="selectedPlayer"]:checked');
+    if (playerId) {
+      deletePlayer(parseInt(playerId.value));
+      populatePlayerList();
+    }
+  });
+
+
+  populatePlayerList();
+
+</script>
+
+</html>
